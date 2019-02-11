@@ -183,3 +183,36 @@ paths:
           description: Deleted
         '404':
           description: Not found
+          
+  /login/blogs/{blogId}/comments:
+    get:
+      summary: Get a list of comments associated with a single post
+      parameters:
+        name: blogId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+          minimum: 1
+      responses:
+        '200':
+          description: Returns an array of comments
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    commenter:
+                      type: string
+                    comment_body:
+                      type: string
+              examples:
+                commenter:
+                  value: first_commenter
+                comment_body:
+                  value: comment_body
+        '404':
+          description: No comments for that blog
