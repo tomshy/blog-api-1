@@ -168,3 +168,18 @@ paths:
           description: Not found
         '400':
           description: Invalid input
+    delete:
+      summary: Deletes an existing post
+      parameters:
+        name: blogId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+          minimum: 1
+      responses:
+        '200':
+          description: Deleted
+        '404':
+          description: Not found
