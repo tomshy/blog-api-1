@@ -137,6 +137,30 @@ paths:
                         title:
                           type: string
                         body:
-                          type: strin
+                          type: string
         '404':
           description: Not found
+    post:
+      summary: Updates an exixting post
+      parameters:
+        name: blogId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+          minimum: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+            type: object
+            properties:
+              new_title:
+                type: string
+              new_body:
+                type: string
+      responses:
+        '200':
+          description: Updated
