@@ -46,29 +46,8 @@ paths:
           description: Created
         '400':
           description: Invalid registration credentials
-  /login:
-    post:
-      summary: Authenticates a user
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                username:
-                  type: string
-                password:
-                  type: string
-      responses:
-        '200':
-          description: Successful login
-        '404':
-          description: User does not exist
-        '400':
-          description: Wrong password
           
-  /login/blogs:
+  /blogs:
     get:
       summary: Gets a list of all blogs
       responses:
@@ -108,7 +87,7 @@ paths:
           description: Created
       
                 
-  /login/blogs/{blogId}:
+  /blogs/{blogId}:
     get:
       summary: Returns a single blog by ID
       parameters:
@@ -140,8 +119,8 @@ paths:
                           type: string
         '404':
           description: Not found
-    put:
-      summary: Updates an exixting post
+    patch:
+      summary: Updates an existing post
       parameters:
         name: blogId
         in: path
@@ -157,6 +136,10 @@ paths:
             schema:
             type: object
             properties:
+              username:
+                type: string
+              password:
+                type: string
               new_title:
                 type: string
               new_body:
@@ -184,7 +167,7 @@ paths:
         '404':
           description: Not found
           
-  /login/blogs/{blogId}/comments:
+  /blogs/{blogId}/comments:
     get:
       summary: Get a list of comments associated with a single post
       parameters:
@@ -216,3 +199,31 @@ paths:
                   value: comment_body
         '404':
           description: No comments for that blog
+    post:
+      summary: Post a comment to a blog
+      paramenters:
+        name: blogId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+          minimum: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+                commenter:
+                  type: string
+                Comment:
+                  type: string
+      responses:
+        '201':
+          description: Comment added
