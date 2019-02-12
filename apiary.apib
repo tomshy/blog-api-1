@@ -224,6 +224,7 @@ paths:
       responses:
         '201':
           description: Comment added
+          
   /blogs/{blogId}/comments/{commentId}:
     get:
       summary: Get a comment by ID
@@ -283,3 +284,5 @@ paths:
       responses:
         '200':
           description: Deleted
+        '404':
+          description: Not found
