@@ -64,6 +64,8 @@ paths:
                       type: integer
                     title:
                       type: string
+                    body:
+                      type: string
               example:
                 id: 1
                 title: first_blog
@@ -105,18 +107,13 @@ paths:
             application/json:
               schema:
                 type: object
-                items:
-                  type: object
-                  properties:
-                    id:
-                      type: integer
-                    blog:
-                      type: object
-                      properties:
-                        title:
-                          type: string
-                        body:
-                          type: string
+                properties:
+                  id:
+                    type: integer
+                  title:
+                    type: string
+                  body:
+                    type: string
         '404':
           description: Not found
     patch:
@@ -227,3 +224,62 @@ paths:
       responses:
         '201':
           description: Comment added
+  /blogs/{blogId}/comments/{commentId}:
+    get:
+      summary: Get a comment by ID
+      parameters:
+        name: blogId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+          minimum: 1
+        name: commentId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+          minimum: 1
+      responses:
+        '200':
+          description: Returns a comment object
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  commentID:
+                    type: integer
+                  commenter:
+                    type: string
+                  comment_body:
+                    type: string
+              example: {
+                "id": 1,
+                "commenter": "pooh",
+                "comment":"Great post"
+              }
+        '404':
+          description: Not found
+    delete:
+      summary: Delete comment by ID
+      parameters:
+        name: blogId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+          minimum: 1
+        name: commentId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+          minimum: 1
+      responses:
+        '200':
+          description: Deleted
