@@ -1,24 +1,11 @@
-openapi: 3.0.0
+openapi: "3.0.0"
 
 info:
   title: Blog API
-  version: 0.0.1
+  version: "1.0.0"
   
 paths:
   /users:
-    get:
-      summary: Returns a list of users.
-      description: Optional extended description in CommonMark or HTML
-      responses:
-        '200':
-          description: A JSON array of user names
-          content:
-            application/json:
-              schema: 
-                type: array
-                items: 
-                  type: string
-            example: ['user1','user2','user3','user4']
     post:
       summary: Creates a user.
       requestBody:
@@ -26,21 +13,12 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                username:
-                  type: string
-                password:
-                  type: string
-            examples:
-              username:
-                summary: Preferred username that will be associated with the a blog.
-                value:
-                  name: pakapaka
-              password:
-                summary: Preferred password
-                value:
-                  name: myverystrongpassword
+              $ref: '#/components/schemas/User'
+            example:
+              username: user01
+              password: superstrongpassword
+              full_name: "super long name"
+                  
       responses:
         '201':
           description: Created
@@ -67,80 +45,61 @@ paths:
                     body:
                       type: string
               example:
-                id: 1
-                title: first_blog
-                id: 2
-                title: second_blog
+                - id: 1
+                  title: first_blog
+                - id: 2
+                  title: second_blog
     post:
       summary: Creates a new blog post
+      security:
+        - BasicAuth: []
       requestBody:
         required: true
         content:
           application/json:
             schema:
-            type: object
-            properties:
-              title:
-                type: string
-              body:
-                type: string
+              $ref: '#/components/schemas/Blog'
+            example:
+              title: "quite the title"
+              text: "and some text"
       responses:
         '201':
           description: Created
+        '401':
+          description: Unauthorized
       
-                
   /blogs/{blogId}:
     get:
       summary: Returns a single blog by ID
       parameters:
-        name: blogId
-        in: path
-        required: true
-        schema:
-          type: integer
-          format: int64
-          minimum: 1
+        - $ref: '#/components/parameters/BlogId'
       responses:
         '200':
           description: Blog object
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  id:
-                    type: integer
-                  title:
-                    type: string
-                  body:
-                    type: string
+                $ref: '#/components/schemas/Blog'
         '404':
           description: Not found
+          
     patch:
       summary: Updates an existing post
+      security:
+        - BasicAuth: []
       parameters:
-        name: blogId
-        in: path
-        required: true
-        schema:
-          type: integer
-          format: int64
-          minimum: 1
+        - $ref: '#/components/parameters/BlogId'
       requestBody:
         required: true
         content:
           application/json:
             schema:
-            type: object
-            properties:
-              username:
-                type: string
-              password:
-                type: string
-              new_title:
-                type: string
-              new_body:
-                type: string
+              type: object
+              properties:
+                title:
+                  type: string
+                text:
+                  type: string
       responses:
         '200':
           description: Updated
@@ -148,33 +107,28 @@ paths:
           description: Not found
         '400':
           description: Invalid input
+        '401':
+          description: Unauthorized
+          
     delete:
       summary: Deletes an existing post
+      security:
+        - BasicAuth: []
       parameters:
-        name: blogId
-        in: path
-        required: true
-        schema:
-          type: integer
-          format: int64
-          minimum: 1
+        - $ref: '#/components/parameters/BlogId'
       responses:
         '200':
           description: Deleted
         '404':
           description: Not found
+        '401':
+          description: Unauthorized
           
   /blogs/{blogId}/comments:
     get:
       summary: Get a list of comments associated with a single post
       parameters:
-        name: blogId
-        in: path
-        required: true
-        schema:
-          type: integer
-          format: int64
-          minimum: 1
+        - $ref: '#/components/parameters/BlogId'
       responses:
         '200':
           description: Returns an array of comments
@@ -183,29 +137,22 @@ paths:
               schema:
                 type: array
                 items:
-                  type: object
-                  properties:
-                    commenter:
-                      type: string
-                    comment_body:
-                      type: string
-              examples:
-                commenter:
-                  value: first_commenter
-                comment_body:
-                  value: comment_body
+                  $ref: '#/components/schemas/Comment'
+              example: 
+                - commenter: first_commenter
+                  body: comment_body
+                  id: 1
+                - commenter: commenter2
+                  body: comment_body
+                  id: 2
         '404':
           description: No comments for that blog
     post:
       summary: Post a comment to a blog
-      paramenters:
-        name: blogId
-        in: path
-        required: true
-        schema:
-          type: integer
-          format: int64
-          minimum: 1
+      security:
+        - BasicAuth: []
+      parameters:
+        - $ref: '#/components/parameters/BlogId'
       requestBody:
         required: true
         content:
@@ -213,76 +160,115 @@ paths:
             schema:
               type: object
               properties:
-                username:
-                  type: string
-                password:
-                  type: string
-                commenter:
-                  type: string
-                Comment:
+                body:
                   type: string
       responses:
         '201':
           description: Comment added
+        '401':
+          description: Unauthorized
           
   /blogs/{blogId}/comments/{commentId}:
     get:
       summary: Get a comment by ID
       parameters:
-        name: blogId
-        in: path
-        required: true
-        schema:
-          type: integer
-          format: int64
-          minimum: 1
-        name: commentId
-        in: path
-        required: true
-        schema:
-          type: integer
-          format: int64
-          minimum: 1
+        - $ref: '#/components/parameters/BlogId'
+        - $ref: '#/components/parameters/CommentId'
       responses:
         '200':
           description: Returns a comment object
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  commentID:
-                    type: integer
-                  commenter:
-                    type: string
-                  comment_body:
-                    type: string
+                $ref: '#/components/schemas/Comment'
               example: {
                 "id": 1,
                 "commenter": "pooh",
-                "comment":"Great post"
+                "body":"Great post"
               }
         '404':
           description: Not found
     delete:
       summary: Delete comment by ID
+      security:
+        - BasicAuth: []
       parameters:
-        name: blogId
-        in: path
-        required: true
-        schema:
-          type: integer
-          format: int64
-          minimum: 1
-        name: commentId
-        in: path
-        required: true
-        schema:
-          type: integer
-          format: int64
-          minimum: 1
+        - $ref: '#/components/parameters/BlogId'
+        - $ref: '#/components/parameters/CommentId'
       responses:
         '200':
           description: Deleted
         '404':
           description: Not found
+        '401':
+          description: Unauthorized
+          
+components:
+  securitySchemes:
+    BasicAuth:
+      type: http
+      scheme: basic
+      
+  schemas:
+    Blog:
+      type: object
+      properties:
+        title:
+          type: string
+        text:
+          type: string
+        id:
+          type: integer
+        author_id:
+          type: integer
+      required:
+        - title
+        - text
+          
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+        username:
+          type: string
+        password:
+          type: string
+          format: password
+        full_name:
+          type: string
+      required:
+        - username
+        - password
+        - full_name
+          
+    Comment:
+      type: object
+      properties:
+        id:
+          type: integer
+        commenter:
+          type: string
+        body:
+          type: string
+        blog_id:
+          type: integer
+    
+  parameters:
+    BlogId:
+      name: blogId
+      in: path
+      required: true
+      schema:
+        type: integer
+        format: int64
+        minimum: 1
+    
+    CommentId:
+      name: commentId
+      in: path
+      required: true
+      schema:
+        type: integer
+        format: int64
+        minimum: 1
