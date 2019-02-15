@@ -24,13 +24,13 @@ paths:
                   
       responses:
         '201':
-          description: User successfully created
+          description: Created
           content:
             application/vnd.api+json:
               schema:
                 $ref: '#/components/schemas/UserResponse'
         '400':
-          description: Invalid registration credentials
+          description: Invalid input
           content:
             application/vnd.api+json:
               schema:
@@ -46,21 +46,17 @@ paths:
       summary: Gets a list of all blogs
       responses:
         '200':
-          description: A list of hashes containing the blog id as the key and the title as the value
+          description: OK
           content:
             application/vnd.api+json:
               schema:
-                oneOf:
-                  - $ref: '#/components/schemas/BlogItems'
-                  - $ref: '#/components/schemas/404List'
-              example:
-                data:
-                  - type: blog
-                    id: 1
-                    attributes:
-                      title: first blog
-                      text: some text
-                      author_id: "1"
+                $ref: '#/components/schemas/BlogItems'
+        '404':
+          description: Not found
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/404List'
       
               
     post:
@@ -72,29 +68,38 @@ paths:
         content:
           application/vnd.api+json:
             schema:
-              type: object
-              properties:
-                data:
-                  type: object
-                  properties:
-                    type:
-                      type: string
-                      example: blog
-                    attributes:
-                      type: object
-                      properties:
-                        title:
-                          type: string
-                          example: quite the title
-                        text:
-                          type: string
-                          example: and some text
+              $ref: '#/components/schemas/BlogItem'
+            example:
+              data:
+                type: "blog"
+                attributes:
+                  title: quite the title
+                  text: and some text
             
       responses:
         '201':
           description: Created
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/SingleBlogResponse'
         '401':
           description: Unauthorized
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '400':
+          description: Invalid input
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                errors:
+                  - status: "400"
+                    title: Bad request
+                    detail: "missing parameter in request"
       
   /blogs/{blogId}:
     get:
@@ -103,7 +108,7 @@ paths:
         - $ref: '#/components/parameters/BlogId'
       responses:
         '200':
-          description: Blog object
+          description: OK
           content:
             application/vnd.api+json:
               schema:
@@ -126,23 +131,31 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                title:
-                  type: string
-                text:
-                  type: string
+              $ref: '#/components/schemas/BlogItem'
       responses:
         '200':
-          description: Updated
+          description: OK
           content:
             application/vnd.api+json:
               schema:
                 $ref: '#/components/schemas/SingleBlogResponse'
         '404':
           description: Not found
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/404'
         '400':
           description: Invalid input
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                errors:
+                  - status: "400"
+                    title: Bad request
+                    detail: "missing parameter in request"
         '401':
           description: Unauthorized
           content:
@@ -161,6 +174,10 @@ paths:
           description: Deleted
         '404':
           description: Not found
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/404'
         '401':
           description: Unauthorized
           content:
@@ -175,13 +192,13 @@ paths:
         - $ref: '#/components/parameters/BlogId'
       responses:
         '200':
-          description: Returns an array of comments
+          description: OK
           content:
             application/vnd.api+json:
               schema:
                 $ref: '#/components/schemas/CommentItems'
         '404':
-          description: No comments for that blog
+          description: Not found
           content:
             application/vnd.api+json:
               schema:
@@ -213,7 +230,7 @@ paths:
                           example: first comment
       responses:
         '201':
-          description: Comment added
+          description: Created
           content:
             application/vnd.api+json:
               schema:
@@ -233,7 +250,7 @@ paths:
         - $ref: '#/components/parameters/CommentId'
       responses:
         '200':
-          description: Returns a comment object
+          description: OK
           content:
             application/vnd.api+json:
               schema:
@@ -257,6 +274,10 @@ paths:
           description: Deleted
         '404':
           description: Not found
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/404'
         '401':
           description: Unauthorized
           content:
